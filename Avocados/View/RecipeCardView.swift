@@ -10,6 +10,9 @@ import SwiftUI
 struct RecipeCardView: View {
     // MARK: - Propary
     var recipe: Recipe
+    var hapticImapct = UIImpactFeedbackGenerator(style: .heavy)
+    
+    @State private var showModal: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -44,33 +47,9 @@ struct RecipeCardView: View {
                     .foregroundColor(.gray)
                     .italic()
                 
-                HStack(alignment: .center, spacing: 5) {
-                    
-                    ForEach(1...(recipe.rating), id: \.self) { _ in
-                        Image(systemName: "star.fill")
-                            .font(.body)
-                        .foregroundColor(.yellow)
-                    }
-                }
+                RecipeRatingView(recipe: recipe)
                 
-                HStack(alignment: .center, spacing: 12) {
-                    HStack(alignment: .center, spacing: 2) {
-                        Image(systemName: "person.2")
-                        Text("Service: \(recipe.serves)")
-                    }
-                    
-                    HStack(alignment: .center, spacing: 2) {
-                        Image(systemName: "clock")
-                        Text("Prep: \(recipe.preparation)")
-                    }
-                    
-                    HStack(alignment: .center, spacing: 2) {
-                        Image(systemName: "flame")
-                        Text("Cooking: \(recipe.cooking)")
-                    }
-                }
-                .font(.footnote)
-                .foregroundStyle(.gray)
+               RecipeCookingView(recipe: recipe)
                 
             }
             .padding()
@@ -79,6 +58,13 @@ struct RecipeCardView: View {
         .background(.white)
         .cornerRadius(12)
         .shadow(color: Color("ColorBlackTransparentLight"),radius: 8, x: 0, y: 0)
+        .onTapGesture {
+            hapticImapct.impactOccurred()
+            showModal = true
+        }
+        .sheet(isPresented: $showModal) {
+            RecipeDetailView(recipe: recipe)
+        }
     }
 }
 
